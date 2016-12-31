@@ -1,10 +1,19 @@
-// Minesweeper-Uni_year1.cpp : Defines the entry point for the application.
+﻿// Minesweeper-Uni_year1.cpp : Defines the entry point for the application.
 //
 
 #include "stdafx.h"
-#include "Minesweeper-Uni_year1.h"
+#include <iostream>
+#include <cstdlib>
+#include <time.h>
+#include <string.h>
+#include <stdio.h>
+#define m_col 300
+#define m_line 300
+using namespace std;
 
-#define MAX_LOADSTRING 100
+
+
+/*#define MAX_LOADSTRING 100
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
@@ -177,4 +186,94 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+*/
+void gen_border(signed char mat[][300],int lin,int col) {
+	unsigned char top = 205;
+	unsigned char side = 186;
+	unsigned char top_left = 201;
+	unsigned char bot_left = 200;
+	unsigned char top_right = 187;
+	unsigned char bot_right = 188;
+
+	for (int i = 0; i < col; i++) { 
+		mat[0][i] = top;
+		mat[lin - 1][i] = top;
+	}
+	for (int i = 0; i < lin; i++) {
+		mat[i][0] = side;
+		mat[i][col - 1] = side;
+	}
+	mat[0][0] = top_left;
+	mat[lin-1][0] = bot_left;
+	mat[0][col - 1] = top_right;
+	mat[lin - 1][col - 1] = bot_right;
+}
+void rand_gen(long q) {
+	 q = (rand() + time(0));
+}
+void gen_bombs(signed char mat[][300], int &Bombs, int lin, int col) {
+	while (Bombs != 0) {
+		int a = (rand() + time(0)) % lin;
+		int b = (rand() + time(0)) % col;
+		if (mat[a][b] != char(35)||mat[a][b]==char(48)) {
+			while (mat[a][b] != char(35)) {
+				a = (rand() + time(0)) % lin;
+				b = (rand() + time(0)) % col;
+			}
+			mat[a][b] = 'B';
+		}
+		else mat[a][b] = 'B';
+		Bombs--;
+	}
+}
+void gen_numbers(signed char mat[][300], int lin, int col) {
+	for (int i=0;i<lin;i++)
+		for (int j = 0; j < col; j++) {
+			int count = 0;
+			if (mat[i][j] == char(35)) {
+				if (mat[i - 1][j - 1] == 'B')count++;
+				if (mat[i - 1][j] == 'B')count++;
+				if (mat[i - 1][j + 1] == 'B')count++;
+				if (mat[i][j - 1] == 'B')count++;
+				if (mat[i][j + 1] == 'B')count++;
+				if (mat[i + 1][j - 1] == 'B')count++;
+				if (mat[i + 1][j] == 'B')count++;
+				if (mat[i + 1][j + 1] == 'B')count++;
+				mat[i][j] = count + '0';
+			}
+		}
+}
+int main() {
+	signed char a[300][300];
+	int lin;
+	int col;
+	cin >> lin;
+	cin >> col;
+	for (int i = 0; i < lin; i++)
+		for (int j = 0; j < col; j++) {
+			a[i][j] = char(35);
+		}
+	int Bombs;
+	cin >> Bombs;/*
+	int count = 0;
+	while (count < Bombs) {
+		long  q = (rand() + time(0)) % lin;
+		long  b = (rand() + time(0)) % col;
+		a[q][b] = 0;
+		count++;
+	}*/
+	gen_border(a, lin, col);
+	gen_bombs(a, Bombs, lin, col);
+	gen_numbers(a, lin, col);
+	for (int i = 0; i < lin; i++) {
+		for (int j = 0; j < col; j++) {
+			cout << a[i][j];
+		}
+		cout << '\n';
+	}
+
+	return 0;
+
 }
